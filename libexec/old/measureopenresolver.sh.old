@@ -12,10 +12,12 @@ outpath=$outpath/$time
 if [ ! -d "$outpath" ]; then
 	mkdir "$outpath"
 fi
+savename="verify.log"
+timename="verify.time"
 date_start=`date +%s%N|cut -c1-13`
-python ./dig_measure.py $inputpath $outpath
+./my_find_open_resolvers $inputpath > $outpath/$savename
 date_end=`date +%s%N|cut -c1-13`
 time=$((($date_end-$date_start)/1000))
 echo "run time:" $time > $outpath/$timename
-#created iplist is saved at $outpath/ip, with the format 'ip status' each line
-
+#extractor ip from verify.log
+cat $outpath/$savename | perl -ne ' print $1."\n" if (m/!!! Got an.* (\d+.+) - possible/)' > $outpath/iplist
