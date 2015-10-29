@@ -1,0 +1,2 @@
+0 0 * * * sh /home/jerry/analysis-log/bin/main.sh
+0 0,6,12,18 * * * sh /home/jerry/analysis-log/bin/maintain.sh
