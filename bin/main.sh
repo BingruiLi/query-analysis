@@ -5,6 +5,7 @@ cd `dirname $0`
 #query.log路径
 logpath="/var/cache/bind/query.log"
 resultpath="../result"
+#time=$(date "+%Y%m%d")
 time=$(date "+%Y%m%d" -d "-1day")
 if [ ! -d $resultpath ]
 then
@@ -18,7 +19,7 @@ fi
 echo "Reading query.log"
 if [ ! -e ../log_data/query.log ]
 then
-	cat $logpath | perl -ne ' ($week,$mon,$day,$ht,$year)=split(" ",localtime(time()-3600*24)); my $time= $day."-".$mon."-".$year; my @field = split(" ",$_); if($field[0] eq $time){ print $_;}' > ../log_data/query.log
+	cat $logpath | perl -ne ' ($week,$mon,$day,$ht,$year)=split(" ",localtime(time()-3600*24)); if( int($day) < 10 ) { $day="0".$day; } my $time= $day."-".$mon."-".$year; my @field = split(" ",$_); if($field[0] eq $time){ print $_;}' > ../log_data/query.log
 fi
 #调用分析日志脚本,该脚本保存结果在../log_result/$time目录下
 echo "Processing query.log"

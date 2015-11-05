@@ -19,7 +19,7 @@ def ExtractorIP(cur):
 
 	data = cur.fetchall()
 	try:
-		count = cur.execute("update %s set total=total+1,status='%s'" % (tablename,init_status))
+		count = cur.execute("update %s set total=total+1, percent=find/total,status='%s'" % (tablename,init_status))
 	except MySQLdb.Error,e:
 	 	print "init total and status from %s failed!" % tablename
 	 	return([])
