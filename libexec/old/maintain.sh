@@ -23,7 +23,8 @@ python ../libexec/dig_measure.py $tmpfile $outpath
 #更新数据库
 echo "Updating databases"
 sh ../libexec/sql_create.sh
-python ../libexec/test_sql_update.py -t $time --maintain $outpath/ip
+python ../libexec/sql_update.py $outpath/ip $time maintain
+
 #Delete tmp files
 if [ -d $resultpath/$time ]
 then

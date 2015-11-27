@@ -1,0 +1,19 @@
+#!/usr/bin/perl
+use Net::IP;
+my $range = $ARGV[0];
+if ( not defined $range ) {
+	print 'error'."\n";
+}
+my $ip = new Net::IP($range);
+print "############"."\n";
+while( $ip ) {
+	if ( $ip->ip == $ip->print.".0") {
+		$ip++;
+		print "error111\n";
+	}
+	else {
+		print $ip->ip."\n";
+		$ip++;
+	}
+}
+exit 0;

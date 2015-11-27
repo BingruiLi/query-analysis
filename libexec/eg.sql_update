@@ -1,0 +1,1 @@
+python test_sql_update.py -t 20151126 --manual-add ip_manual 

@@ -33,7 +33,7 @@ def Writedata(data):
 def Writeip(string,status):
 	lock.acquire()
 	fw = open(ippath,'a')
-	fw.write(string+' '+status+'\n')
+	fw.write(string+'\t'+status+'\n')
 	fw.close()
 	lock.release()
 

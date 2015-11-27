@@ -43,6 +43,5 @@ python ../libexec/dig_measure.py ../log_result/$time/responseip $outpath
 #更新数据库
 echo "Updating databases"
 sh ../libexec/sql_create.sh
-#python ../libexec/sql_update.py $outpath/ip $time main
-python ../libexec/sql_update.py -t $time --main $outpath/ip
+python ../libexec/sql_update.py $outpath/ip $time main
 #结束
