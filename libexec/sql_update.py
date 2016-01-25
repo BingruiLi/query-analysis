@@ -5,12 +5,34 @@ import os
 import MySQLdb
 import getopt
 
-DBHOST = "localhost"
-DBNAME = "resolver"
-DBUSER = "remote"
-DBPASSWD = "remote"
-TABLENAME = "open_resolver"
+CONF_PATH = "../etc/program.conf"
+DBHOST = ""
+DBNAME = ""
+DBUSER = ""
+DBPASSWD = ""
+TABLENAME = ""
+
 TIME = ""
+
+def ConfRead():
+	global DBHOST
+	global DBNAME
+	global DBUSER
+	global DBPASSWD
+	global TABLENAME
+	isExists = os.path.exists(CONF_PATH)
+	if not isExists:
+		print "CONF_PATH doesn't exists!\nquit now"
+		sys.exit()
+	DBHOST = os.popen("grep ^DBHOST %s | awk '{print $3}'" % CONF_PATH).read().strip()
+	DBNAME = os.popen("grep ^DBNAME %s | awk '{print $3}'" % CONF_PATH).read().strip()
+	DBUSER = os.popen("grep ^DBUSER %s | awk '{print $3}'" % CONF_PATH).read().strip()
+	DBPASSWD = os.popen("grep ^DBPASSWD %s | awk '{print $3}'" % CONF_PATH).read().strip()
+	TABLENAME = os.popen("grep ^TABLENAME %s | awk '{print $3}'" % CONF_PATH).read().strip()
+	if DBHOST=="" or DBNAME=="" or DBUSER=="" or DBPASSWD=="" or TABLENAME=="":
+		print "Read configure file failured!\nquit now"
+		sys.exit()
+
 def ManualAdd(inputfile):
 	isExists = os.path.exists(inputfile)
 	if not isExists:
@@ -67,10 +89,11 @@ def InsertData(ip_line,cur,flag):
 	if flag == 2:  #match ManualAdd()
 		return
 	result = cur.fetchone()
-	find = int(result[0])+1
+	find = int(result[0])
 	total = int(result[1])+1
-	if flag == 1: #match maintain mode
-		total = total-1
+	if status != "NULL":
+		find = find+1
+
 	percent = float(find)/float(total)
 	try:
 		cur.execute("update %s set last_time='%s',find=%d,total=%d,percent=%f,status='%s' where IP='%s'" % (TABLENAME,TIME,find,total,percent,status,ip))
@@ -92,6 +115,7 @@ Usage:
 def main(argv):
 	global DBNAME
 	global TIME
+	ConfRead()
 	flag = 0
 	TIME = 0
 	inputfile = ""

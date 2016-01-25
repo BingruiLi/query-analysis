@@ -5,32 +5,58 @@ import os
 import MySQLdb
 import time
 
-dbname = "resolver"
-tablename = "open_resolver"
+CONF_PATH = "../etc/program.conf"
+DBHOST = ""
+DBNAME = ""
+DBUSER = ""
+DBPASSWD = ""
+TABLENAME = ""
 init_status = "NULL"
+
+def ConfRead():
+	global DBHOST
+	global DBNAME
+	global DBUSER
+	global DBPASSWD
+	global TABLENAME
+	isExists = os.path.exists(CONF_PATH)
+	if not isExists:
+		print "CONF_PATH doesn't exists!\nquit now"
+		sys.exit()
+	DBHOST = os.popen("grep ^DBHOST %s | awk '{print $3}'" % CONF_PATH).read().strip()
+	DBNAME = os.popen("grep ^DBNAME %s | awk '{print $3}'" % CONF_PATH).read().strip()
+	DBUSER = os.popen("grep ^DBUSER %s | awk '{print $3}'" % CONF_PATH).read().strip()
+	DBPASSWD = os.popen("grep ^DBPASSWD %s | awk '{print $3}'" % CONF_PATH).read().strip()
+	TABLENAME = os.popen("grep ^TABLENAME %s | awk '{print $3}'" % CONF_PATH).read().strip()
+	if DBHOST=="" or DBNAME=="" or DBUSER=="" or DBPASSWD=="" or TABLENAME=="":
+		print "Read configure file failured!\nquit now"
+		sys.exit()
 
 def ExtractorIP(cur):
 	data = []
 	try:
-		count = cur.execute("select IP from %s " % tablename)
+		count = cur.execute("select IP from %s " % TABLENAME)
 	except MySQLdb.Error,e:
-	 	print "extractor ip from  %s failed!" % tablename
+	 	print "extractor ip from  %s failed!" % TABLENAME
 	 	return([])
 
 	data = cur.fetchall()
-	try:
-		count = cur.execute("update %s set total=total+1, percent=find/total,status='%s'" % (tablename,init_status))
-	except MySQLdb.Error,e:
-	 	print "init total and status from %s failed!" % tablename
-	 	return([])
+##### comment total+1 codes
+#	try:
+#		count = cur.execute("update %s set total=total+1, percent=find/total,status='%s'" % (TABLENAME,init_status))
+#	except MySQLdb.Error,e:
+#	 	print "init total and status from %s failed!" % TABLENAME
+#	 	return([])
+##### 
 	return(data)
 
+
 def main():
-	global dbname
+	ConfRead()
 	outputfile = sys.argv[1]
 #	outputfile = "/tmp/tempiplist"
 	try:
-		conn = MySQLdb.connect(host='localhost',user='remote',passwd='remote',db=dbname)
+		conn = MySQLdb.connect(host=DBHOST,user=DBUSER,passwd=DBPASSWD,db=DBNAME)
 	except MySQLdb.Error,e:
 	 	print "connection failed!"
 	 	return
